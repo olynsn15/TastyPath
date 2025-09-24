@@ -22,7 +22,9 @@ function Home() {
     },
   ];
 
-  const handleSearch = () => {};
+  const handleSearch = () => {
+    alert(searchQuery);
+  };
 
   return (
     <div className="home">
@@ -34,11 +36,10 @@ function Home() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+        <button type="submit" className="search-button">
+          Search
+        </button>
       </form>
-
-      <button type="submit" className="search-button">
-        Search
-      </button>
 
       <div className="movies-grid">
         {movies.map((movie) => (
