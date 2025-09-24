@@ -3,6 +3,8 @@ import { useState } from "react";
 
 function Home() {
   // state, function to set state
+  // persisting state so the value wont change everytime a change occurs
+  // state will be resetted when page is refreshed
   const [searchQuery, setSearchQuery] = useState("");
 
   const movies = [
@@ -22,8 +24,11 @@ function Home() {
     },
   ];
 
-  const handleSearch = () => {
+  // changing states
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     alert(searchQuery);
+    setSearchQuery("-----");
   };
 
   return (
@@ -42,9 +47,13 @@ function Home() {
       </form>
 
       <div className="movies-grid">
-        {movies.map((movie) => (
-          <MovieCard movie={movie} key={movie.id} />
-        ))}
+        {movies.map(
+          // search
+          // when a state change occurs, entire components is re rendered
+          (movie) => (
+            <MovieCard movie={movie} key={movie.id} />
+          )
+        )}
       </div>
     </div>
   );
