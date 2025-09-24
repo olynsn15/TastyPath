@@ -1,4 +1,5 @@
 import type { Movie } from "../types/movie";
+import "../css/MovieCard.css";
 
 type MovieCardProps = {
   movie: Movie;
@@ -16,7 +17,7 @@ function MovieCard({ movie }: MovieCardProps) {
 
   return (
     <div className="movie-card">
-      <div className="movie-image">
+      <div className="movie-poster">
         <img src={movie.poster_path} alt={movie.title} />
         <div className="movie-overlay">
           <button className="favorite-btn" onClick={onFavoriteClick}>
