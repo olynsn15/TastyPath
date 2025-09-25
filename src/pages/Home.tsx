@@ -9,12 +9,11 @@ function Home() {
   // persisting state so the value wont change everytime a change occurs
   // state will be resetted when page is refreshed
   const [searchQuery, setSearchQuery] = useState("");
-
-  // use effect
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // use effect
   // if any change happens to the array, we will re run the operation
   // it is empty now so it will only run one time in the beginning
   useEffect(() => {
@@ -34,10 +33,23 @@ function Home() {
   }, []);
 
   // changing states
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(searchQuery);
-    setSearchQuery("-----");
+    if (!searchQuery.trim()) return;
+    if (loading) return; // so user cannot search when already searching for something else
+
+    setLoading(true);
+
+    try {
+      const searchResults = await searchMovies(searchQuery);
+      setMovies(searchResults);
+      setError(null);
+    } catch (err) {
+      console.log(err);
+      setError("Failed to search movies...");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
