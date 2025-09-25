@@ -1,6 +1,8 @@
 import MovieCard from "../components/MovieCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { searchMovies, getPopularMovies } from "../services/api";
 import "../css/Home.css";
+import type { Movie } from "../types/movie";
 
 function Home() {
   // state, function to set state
@@ -8,22 +10,28 @@ function Home() {
   // state will be resetted when page is refreshed
   const [searchQuery, setSearchQuery] = useState("");
 
-  const movies = [
-    {
-      id: 1,
-      title: "Tim's Film",
-      overview: "Test movie",
-      release_date: "2024",
-      poster_path: "/test.jpg",
-    },
-    {
-      id: 2,
-      title: "Lili's Film",
-      overview: "Test movie 2",
-      release_date: "2020",
-      poster_path: "/test.jpg",
-    },
-  ];
+  // use effect
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // if any change happens to the array, we will re run the operation
+  // it is empty now so it will only run one time in the beginning
+  useEffect(() => {
+    const loadPopularMovies = async () => {
+      try {
+        const popularMovies = await getPopularMovies();
+        setMovies(popularMovies);
+      } catch (err) {
+        setError("Failed to load movies...");
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPopularMovies();
+  }, []);
 
   // changing states
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,15 +55,21 @@ function Home() {
         </button>
       </form>
 
-      <div className="movies-grid">
-        {movies.map(
-          // search
-          // when a state change occurs, entire components is re rendered
-          (movie) => (
-            <MovieCard movie={movie} key={movie.id} />
-          )
-        )}
-      </div>
+      {loading ? (
+        <div className="loading">Loading...</div>
+      ) : (
+        <div className="movies-grid">
+          {movies.map(
+            // search
+            // when a state change occurs, entire components is re rendered
+            (movie) => (
+              <MovieCard movie={movie} key={movie.id} />
+            )
+          )}
+        </div>
+      )}
+
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 }
