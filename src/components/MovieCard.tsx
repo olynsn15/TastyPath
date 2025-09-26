@@ -1,5 +1,7 @@
 import type { Movie } from "../types/movie";
 import "../css/MovieCard.css";
+import { useMovieContext } from "../contexts/MovieContext";
+import type { MouseEvent } from "react";
 
 type MovieCardProps = {
   movie: Movie;
@@ -11,8 +13,16 @@ type MovieCardProps = {
 // dan itu gabisa karena kita mau keluarin movie property dari prop object
 
 function MovieCard({ movie }: MovieCardProps) {
-  function onFavoriteClick() {
-    alert("clicked");
+  const { isFavorite, addToFavorites, removeFromFavorites } = useMovieContext();
+
+  const favorite = isFavorite(movie.id);
+
+  function onFavoriteClick(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+
+    // passing in the movie id to be checked
+    if (favorite) removeFromFavorites(movie.id);
+    else addToFavorites(movie);
   }
 
   return (
@@ -23,7 +33,10 @@ function MovieCard({ movie }: MovieCardProps) {
           alt={movie.title}
         />
         <div className="movie-overlay">
-          <button className="favorite-btn" onClick={onFavoriteClick}>
+          <button
+            className={`favorite-btn ${favorite ? "active" : ""}`}
+            onClick={onFavoriteClick}
+          >
             ♥
           </button>
         </div>
